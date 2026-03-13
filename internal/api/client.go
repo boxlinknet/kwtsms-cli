@@ -8,9 +8,12 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -70,6 +73,46 @@ type ValidateResponse struct {
 	APIError
 }
 
+// networkError converts a raw Go HTTP/network error into a clean user-facing message.
+// It never exposes internal URLs, IP addresses, or DNS server details.
+func networkError(err error) error {
+	if err == nil {
+		return nil
+	}
+	msg := err.Error()
+
+	// Timeout (30s limit exceeded)
+	if errors.Is(err, fmt.Errorf("context deadline exceeded")) ||
+		strings.Contains(msg, "timeout") ||
+		strings.Contains(msg, "deadline exceeded") {
+		return fmt.Errorf("connection timed out. Check your internet connection and try again")
+	}
+
+	// DNS / host not found
+	var dnsErr *url.Error
+	if errors.As(err, &dnsErr) {
+		inner := dnsErr.Err.Error()
+		if strings.Contains(inner, "no such host") ||
+			strings.Contains(inner, "lookup") ||
+			strings.Contains(inner, "DNS") {
+			return fmt.Errorf("cannot reach kwtsms.com. Check your internet connection")
+		}
+		if strings.Contains(inner, "connection refused") {
+			return fmt.Errorf("connection refused by server. Try again later")
+		}
+		if strings.Contains(inner, "network is unreachable") ||
+			strings.Contains(inner, "no route to host") {
+			return fmt.Errorf("no internet connection. Check your network and try again")
+		}
+		if strings.Contains(inner, "timeout") || strings.Contains(inner, "deadline") {
+			return fmt.Errorf("connection timed out. Check your internet connection and try again")
+		}
+	}
+
+	// Generic fallback - no internal details exposed
+	return fmt.Errorf("network error. Check your internet connection and try again")
+}
+
 // post sends a JSON POST request to the given kwtSMS endpoint and returns the
 // raw response body. It sets Content-Type and Accept headers to application/json.
 // The request body is never logged to protect credentials and phone numbers.
@@ -88,7 +131,7 @@ func post(endpoint string, body interface{}) ([]byte, error) {
 
 	resp, err := httpClient.Do(req)
 	if err != nil {
-		return nil, fmt.Errorf("request to %s failed: %w", endpoint, err)
+		return nil, networkError(err)
 	}
 	defer resp.Body.Close()
 
