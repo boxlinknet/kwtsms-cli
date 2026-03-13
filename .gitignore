@@ -7,22 +7,42 @@ kwtsms-cli.exe
 *.test
 *.out
 vendor/
+coverage.out
+cpu.prof
+mem.prof
 
 # Environment
 .env
 .env.*
 
-# Secrets and logs
+# Secrets and keys
+*.pem
+*.key
+*.crt
+config.toml
+
+# Logs and archives
 *.log
 *.zip
 
 # IDE
 .idea/
 .vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+tmp/
+temp/
 
 # Project-specific
 .claude/
 CLAUDE.md
+.claude.local.md
 docs/
 .worktrees/
 docker/
