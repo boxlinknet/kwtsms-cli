@@ -107,6 +107,32 @@ func PrintSend(resp *api.SendResponse) {
 	fmt.Printf("MsgID:      %s\n", resp.MsgID)
 }
 
+// PrintSendResults prints aggregated results for one or more batches.
+// For a single batch it delegates to PrintSend. For multiple batches it sums
+// Numbers and Charged, shows the final balance, and lists each MsgID.
+func PrintSendResults(responses []*api.SendResponse) {
+	if len(responses) == 1 {
+		PrintSend(responses[0])
+		return
+	}
+	var totalNumbers, totalCharged int64
+	for _, r := range responses {
+		totalNumbers += r.Numbers
+		totalCharged += r.PointsCharged
+	}
+	fmt.Println("Sent")
+	fmt.Printf("Numbers:    %s\n", FormatNumber(totalNumbers))
+	fmt.Printf("Charged:    %s\n", FormatNumber(totalCharged))
+	fmt.Printf("Balance:    %s\n", FormatNumber(responses[len(responses)-1].BalanceAfter))
+	for i, r := range responses {
+		if i == 0 {
+			fmt.Printf("MsgID:      %s\n", r.MsgID)
+		} else {
+			fmt.Printf("            %s\n", r.MsgID)
+		}
+	}
+}
+
 // PrintError prints an error message to stderr.
 func PrintError(err error) {
 	fmt.Fprintf(os.Stderr, "Error: %s\n", err.Error())

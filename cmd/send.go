@@ -8,6 +8,7 @@ package cmd
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/spf13/cobra"
 
@@ -15,6 +16,8 @@ import (
 	"github.com/boxlinknet/kwtsms-cli/internal/output"
 	"github.com/boxlinknet/kwtsms-cli/internal/sanitize"
 )
+
+const maxBatchSize = 200
 
 var (
 	sendTo      string
@@ -68,14 +71,39 @@ func runSend() error {
 		return fmt.Errorf("invalid sender ID: %w", err)
 	}
 
-	numbers := strings.Join(phones, ",")
-	resp, err := api.SendSMS(Username, Password, sender, numbers, message, sendTest)
+	responses, err := sendBulk(Username, Password, sender, message, phones, sendTest)
 	if err != nil {
 		return err
 	}
 	if jsonFlag {
-		return output.PrintJSON(resp)
+		if len(responses) == 1 {
+			return output.PrintJSON(responses[0])
+		}
+		return output.PrintJSON(responses)
 	}
-	output.PrintSend(resp)
+	output.PrintSendResults(responses)
 	return nil
+}
+
+// sendBulk splits phones into batches of maxBatchSize and sends each batch,
+// sleeping 500ms between batches to stay within rate limits.
+// Stops and returns the error on the first failed batch.
+func sendBulk(username, password, sender, message string, phones []string, test bool) ([]*api.SendResponse, error) {
+	var responses []*api.SendResponse
+	for i := 0; i < len(phones); i += maxBatchSize {
+		end := i + maxBatchSize
+		if end > len(phones) {
+			end = len(phones)
+		}
+		numbers := strings.Join(phones[i:end], ",")
+		resp, err := api.SendSMS(username, password, sender, numbers, message, test)
+		if err != nil {
+			return nil, err
+		}
+		responses = append(responses, resp)
+		if end < len(phones) {
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
+	return responses, nil
 }
