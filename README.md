@@ -77,13 +77,13 @@ kwtsms-cli send --to 96598765432 --message "Hello from kwtsms-cli"
 kwtsms-cli balance
 ```
 
-Your API credentials are stored in `~/.config/kwtsms-cli/config.toml` with restricted permissions. You can get your API credentials from your [kwtSMS account](https://www.kwtsms.com/account/api/).
+Your API credentials are stored in `~/.config/kwtsms-cli/kwtsms-cli.toml` with restricted permissions. You can get your API credentials from your [kwtSMS account](https://www.kwtsms.com/account/api/).
 
 ## Commands
 
 ### `kwtsms-cli setup`
 
-Interactive setup wizard. Prompts for your API username and password, verifies them against the API, then lets you choose a default sender ID. Writes the config file to the correct location for your operating system.
+Interactive setup wizard. Prompts for your API username and password, verifies them against the API, lets you choose a default sender ID, and configures a log file. Writes the config file to the correct location for your operating system.
 
 ```bash
 kwtsms-cli setup
@@ -196,14 +196,17 @@ These flags work on every command.
 
 | Platform | Location |
 |---|---|
-| Linux / macOS | `~/.config/kwtsms-cli/config.toml` |
-| Windows | `%APPDATA%\kwtsms-cli\config.toml` |
+| Linux / macOS | `~/.config/kwtsms-cli/kwtsms-cli.toml` |
+| Windows | `%APPDATA%\kwtsms-cli\kwtsms-cli.toml` |
 
 ```toml
 username = "myapiuser"
 password = "myapipass"
 sender   = "MY-SENDER"
+log_file = "kwtsms-cli.log"
 ```
+
+The `log_file` value is a filename relative to the directory where you run the binary. Omit it or leave it empty to disable logging.
 
 ### Environment variables
 

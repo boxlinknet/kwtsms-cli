@@ -1,7 +1,7 @@
 // Package config handles the kwtsms-cli configuration file.
-// Config file location: ~/.config/kwtsms-cli/config.toml (Linux/macOS)
+// Config file location: ~/.config/kwtsms-cli/kwtsms-cli.toml (Linux/macOS)
 //
-//	%APPDATA%\kwtsms-cli\config.toml (Windows)
+//	%APPDATA%\kwtsms-cli\kwtsms-cli.toml (Windows)
 //
 // Credential priority (highest wins): CLI flags > env vars > config file.
 // Viper handles the priority merging in cmd/root.go.
@@ -17,8 +17,8 @@ import (
 
 const (
 	appName    = "kwtsms-cli"
-	configFile = "config.toml"
-	logFile    = "kwtsms.log"
+	configFile = "kwtsms-cli.toml"
+	logFile    = "kwtsms-cli.log"
 )
 
 // ConfigDir returns the platform-appropriate config directory for kwtsms-cli.
@@ -34,13 +34,10 @@ func ConfigDir() (string, error) {
 	return filepath.Join(base, appName), nil
 }
 
-// DefaultLogFile returns the default log file path in the config directory.
+// DefaultLogFile returns the default log filename.
+// The file is created in the working directory where the binary is run.
 func DefaultLogFile() (string, error) {
-	dir, err := ConfigDir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(dir, logFile), nil
+	return logFile, nil
 }
 
 // ConfigPath returns the full path to the config file.
