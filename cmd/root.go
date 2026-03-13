@@ -17,11 +17,12 @@ import (
 	"github.com/boxlinknet/kwtsms-cli/internal/sanitize"
 )
 
-// Credentials resolved by PersistentPreRunE and used by all subcommands.
+// Credentials and settings resolved by PersistentPreRunE and used by all subcommands.
 var (
 	Username      string
 	Password      string
 	DefaultSender string
+	LogFile       string
 )
 
 // Global flag values
@@ -98,9 +99,10 @@ func loadCredentials() error {
 		return fmt.Errorf("no credentials found. Run 'kwtsms-cli setup' to configure")
 	}
 
-	Username = u
-	Password = p
+	Username      = u
+	Password      = p
 	DefaultSender = s
+	LogFile       = viper.GetString("log_file")
 	return nil
 }
 

@@ -18,6 +18,7 @@ import (
 const (
 	appName    = "kwtsms-cli"
 	configFile = "config.toml"
+	logFile    = "kwtsms.log"
 )
 
 // ConfigDir returns the platform-appropriate config directory for kwtsms-cli.
@@ -31,6 +32,15 @@ func ConfigDir() (string, error) {
 		return "", fmt.Errorf("cannot determine config directory: %w", err)
 	}
 	return filepath.Join(base, appName), nil
+}
+
+// DefaultLogFile returns the default log file path in the config directory.
+func DefaultLogFile() (string, error) {
+	dir, err := ConfigDir()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(dir, logFile), nil
 }
 
 // ConfigPath returns the full path to the config file.
@@ -49,7 +59,8 @@ func ConfigPath(override string) (string, error) {
 // Write creates the config directory if needed and writes the TOML config file.
 // On Unix systems it sets file permissions to 0600 (user read/write only)
 // to protect credentials from other users.
-func Write(path, username, password, sender string) error {
+// logFilePath may be empty to disable logging.
+func Write(path, username, password, sender, logFilePath string) error {
 	dir := filepath.Dir(path)
 	if err := os.MkdirAll(dir, 0700); err != nil {
 		return fmt.Errorf("failed to create config directory %s: %w", dir, err)
@@ -57,6 +68,9 @@ func Write(path, username, password, sender string) error {
 
 	content := fmt.Sprintf("username = %q\npassword = %q\nsender   = %q\n",
 		username, password, sender)
+	if logFilePath != "" {
+		content += fmt.Sprintf("log_file = %q\n", logFilePath)
+	}
 
 	// Write with restricted permissions
 	perm := os.FileMode(0600)

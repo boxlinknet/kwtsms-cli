@@ -105,15 +105,42 @@ func runSetup() error {
 		return fmt.Errorf("invalid sender ID: %w", err)
 	}
 
+	// Prompt for log file
+	defaultLog, err := config.DefaultLogFile()
+	if err != nil {
+		defaultLog = "kwtsms.log"
+	}
+	fmt.Printf("\nLog file [%s]\n(Enter for default, type path to change, \"none\" to disable): ", defaultLog)
+	rawLog, err := reader.ReadString('\n')
+	if err != nil {
+		return fmt.Errorf("failed to read log file path: %w", err)
+	}
+	rawLog = strings.TrimSpace(rawLog)
+
+	var logFilePath string
+	switch strings.ToLower(rawLog) {
+	case "":
+		logFilePath = defaultLog // Enter: use default, logging on
+	case "none", "-", "no":
+		logFilePath = "" // logging disabled
+	default:
+		logFilePath = rawLog // custom path
+	}
+
 	// Write config file
 	cfgPath, err := config.ConfigPath(configFlag)
 	if err != nil {
 		return err
 	}
-	if err := config.Write(cfgPath, username, password, sender); err != nil {
+	if err := config.Write(cfgPath, username, password, sender, logFilePath); err != nil {
 		return err
 	}
 
 	fmt.Printf("\nConfig saved to: %s\n", cfgPath)
+	if logFilePath != "" {
+		fmt.Printf("Log file:        %s\n", logFilePath)
+	} else {
+		fmt.Println("Logging:         disabled")
+	}
 	return nil
 }

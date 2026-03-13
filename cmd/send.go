@@ -13,6 +13,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/boxlinknet/kwtsms-cli/internal/api"
+	"github.com/boxlinknet/kwtsms-cli/internal/logger"
 	"github.com/boxlinknet/kwtsms-cli/internal/output"
 	"github.com/boxlinknet/kwtsms-cli/internal/sanitize"
 )
@@ -73,8 +74,10 @@ func runSend() error {
 
 	responses, err := sendBulk(Username, Password, sender, message, phones, sendTest)
 	if err != nil {
+		logger.LogError(LogFile, err)
 		return err
 	}
+	logger.LogSend(LogFile, responses)
 	if jsonFlag {
 		if len(responses) == 1 {
 			return output.PrintJSON(responses[0])
