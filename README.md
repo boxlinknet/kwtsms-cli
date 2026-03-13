@@ -15,19 +15,6 @@ Designed for developers, DevOps engineers, and AI agents that need to integrate 
 
 [kwtSMS](https://www.kwtsms.com) is a Kuwait-based SMS gateway trusted by businesses to deliver messages across Kuwait (Zain, Ooredoo, STC, Virgin) and internationally. It offers private Sender IDs, free API testing, non-expiring credits, and competitive flat-rate pricing. Open a free account in under one minute at [kwtsms.com/signup](https://www.kwtsms.com/signup/), no paperwork or payment required.
 
-- Website: [www.kwtsms.com](https://www.kwtsms.com)
-- Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
-- Support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
-- FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
-
-## Use Cases
-
-- **SMS automation:** Send notifications, alerts, and reminders from shell scripts and cron jobs.
-- **AI agent integration:** Provide AI agents and LLM-powered tools with the ability to send SMS messages as a tool call.
-- **CI/CD pipelines:** Trigger SMS alerts on deployment, test failure, or system events.
-- **OTP delivery:** Send one-time passwords from any script or backend service.
-- **Balance monitoring:** Check remaining credits as part of a scheduled health check.
-
 ## Installation
 
 ### Direct download
