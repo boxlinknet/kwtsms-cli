@@ -278,6 +278,21 @@ The `log_file` value in the config is a filename relative to the directory where
 
 ## AI Agent and Automation Usage
 
+### Agent Skill
+
+A ready-to-use skill file for Claude Code and other AI coding agents is included at [`skill/kwtsms-cli/SKILL.md`](skill/kwtsms-cli/SKILL.md). It covers:
+
+- Auto-detecting the correct binary for the running OS and architecture
+- Downloading and installing the binary
+- Configuring credentials via environment variables
+- All commands with expected output examples
+- Rules for safe agent use (always `--test` during development, credential handling, phone format)
+- Full error code reference
+
+To use it in Claude Code, add the skill to your project and the agent will know how to install and operate kwtsms-cli without additional instructions.
+
+### Scripting
+
 kwtsms-cli is built for use in automated environments. Pair `--json` with any command for structured output that is easy to parse.
 
 **Send and capture the message ID:**
