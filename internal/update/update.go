@@ -6,10 +6,15 @@ package update
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
+	"regexp"
 	"strings"
 	"time"
 )
+
+// semverRE matches valid semver version strings with optional v prefix: v1.2.3 or 1.2.3
+var semverRE = regexp.MustCompile(`^v?\d+\.\d+\.\d+$`)
 
 // releaseURL is a var so tests can override it with an httptest.Server URL.
 var releaseURL = "https://api.github.com/repos/boxlinknet/kwtsms-cli/releases/latest"
@@ -33,6 +38,11 @@ func check(current string) string {
 		return ""
 	}
 
+	// Validate current version looks like semver before making any request.
+	if !semverRE.MatchString(current) {
+		return ""
+	}
+
 	client := &http.Client{Timeout: 3 * time.Second}
 	resp, err := client.Get(releaseURL)
 	if err != nil {
@@ -44,17 +54,28 @@ func check(current string) string {
 		return ""
 	}
 
+	// Cap response body to 4KB — we only need the tag_name field.
+	body, err := io.ReadAll(io.LimitReader(resp.Body, 4096))
+	if err != nil {
+		return ""
+	}
+
 	var release struct {
 		TagName string `json:"tag_name"`
 	}
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+	if err := json.Unmarshal(body, &release); err != nil {
+		return ""
+	}
+
+	// Validate the tag from the API is a proper semver string before using it.
+	if !semverRE.MatchString(release.TagName) {
 		return ""
 	}
 
 	latest := strings.TrimPrefix(release.TagName, "v")
 	cur := strings.TrimPrefix(current, "v")
 
-	if latest == "" || latest == cur {
+	if latest == cur {
 		return ""
 	}
 

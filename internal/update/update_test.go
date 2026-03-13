@@ -75,6 +75,22 @@ func TestCheck_ServerError(t *testing.T) {
 	}
 }
 
+func TestCheck_MalformedTagFromAPI(t *testing.T) {
+	srv := serve(t, "<script>alert(1)</script>")
+	msg := checkWith(t, srv, "v1.0.0")
+	if msg != "" {
+		t.Errorf("expected empty notice for malformed tag, got %q", msg)
+	}
+}
+
+func TestCheck_MalformedCurrentVersion(t *testing.T) {
+	srv := serve(t, "v1.1.0")
+	msg := checkWith(t, srv, "not-a-version")
+	if msg != "" {
+		t.Errorf("expected empty notice for malformed current version, got %q", msg)
+	}
+}
+
 func TestCheckAsync_ReturnsChannel(t *testing.T) {
 	srv := serve(t, "v9.9.9")
 	orig := releaseURL
