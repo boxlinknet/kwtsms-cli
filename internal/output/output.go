@@ -1,7 +1,7 @@
 // Package output handles all CLI output formatting.
 // Human-readable output goes to stdout. Errors go to stderr.
 // Use --json flag for machine-readable JSON output.
-// Related files: cmd/balance.go, cmd/send.go, cmd/validate.go, cmd/senderid.go, cmd/coverage.go
+// Related files: cmd/balance.go, cmd/send.go, cmd/senderid.go, cmd/coverage.go
 package output
 
 import (
@@ -105,22 +105,6 @@ func PrintSend(resp *api.SendResponse) {
 	fmt.Printf("Charged:    %s\n", FormatNumber(resp.PointsCharged))
 	fmt.Printf("Balance:    %s\n", FormatNumber(resp.BalanceAfter))
 	fmt.Printf("MsgID:      %s\n", resp.MsgID)
-}
-
-// PrintValidate prints Valid / Invalid / NoRoute lines.
-// Prints "none" for empty lists.
-func PrintValidate(resp *api.ValidateResponse) {
-	fmt.Printf("Valid:    %s\n", joinOrNone(resp.Mobile.OK))
-	fmt.Printf("Invalid:  %s\n", joinOrNone(resp.Mobile.ER))
-	fmt.Printf("NoRoute:  %s\n", joinOrNone(resp.Mobile.NR))
-}
-
-// joinOrNone joins a slice with commas or returns "none" if empty.
-func joinOrNone(items []string) string {
-	if len(items) == 0 {
-		return "none"
-	}
-	return strings.Join(items, ", ")
 }
 
 // PrintError prints an error message to stderr.

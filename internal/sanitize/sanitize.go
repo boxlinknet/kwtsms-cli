@@ -1,7 +1,7 @@
 // Package sanitize provides input cleaning for all user-supplied values.
 // It is called before any API call or config use to enforce strict input rules.
 // All functions accept a raw string and return a cleaned string or an error.
-// Related files: cmd/send.go, cmd/validate.go, internal/config/config.go
+// Related files: cmd/send.go, internal/config/config.go
 package sanitize
 
 import (

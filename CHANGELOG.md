@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Initial release of kwtsms-cli
-- Commands: setup, balance, senderid, coverage, send, validate
+- Commands: setup, balance, senderid, coverage, send
 - Pre-built binaries for Linux x64, ARM64, ARMv7, macOS Intel, macOS Apple Silicon, Windows x64
 - Compile from source support with plain `go build`
 - Config file with platform-appropriate location

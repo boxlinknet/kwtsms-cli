@@ -2,7 +2,7 @@
 // All requests use POST with Content-Type: application/json.
 // Credentials are passed in the JSON body, never in headers or query params.
 // API base URL: https://www.kwtsms.com/API/
-// Related files: cmd/balance.go, cmd/send.go, cmd/validate.go, cmd/senderid.go, cmd/coverage.go
+// Related files: cmd/balance.go, cmd/send.go, cmd/senderid.go, cmd/coverage.go
 package api
 
 import (
@@ -56,20 +56,6 @@ type SendResponse struct {
 	Numbers       int64  `json:"numbers"`
 	PointsCharged int64  `json:"points-charged"`
 	BalanceAfter  int64  `json:"balance-after"`
-	APIError
-}
-
-// ValidateMobile holds the categorised results from POST /API/validate/
-type ValidateMobile struct {
-	OK []string `json:"OK"`
-	ER []string `json:"ER"`
-	NR []string `json:"NR"`
-}
-
-// ValidateResponse is returned by POST /API/validate/
-type ValidateResponse struct {
-	Result string         `json:"result"`
-	Mobile ValidateMobile `json:"mobile"`
 	APIError
 }
 
@@ -259,26 +245,3 @@ func SendSMS(username, password, sender, numbers, message string, test bool) (*S
 	return &resp, nil
 }
 
-// ValidateNumbers calls POST /API/validate/ to check phone number validity.
-// numbers must be a comma-separated string of phone numbers.
-func ValidateNumbers(username, password, numbers string) (*ValidateResponse, error) {
-	body := struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
-		Mobile   string `json:"mobile"`
-	}{username, password, numbers}
-
-	data, err := post("validate/", body)
-	if err != nil {
-		return nil, err
-	}
-
-	var resp ValidateResponse
-	if err := json.Unmarshal(data, &resp); err != nil {
-		return nil, fmt.Errorf("failed to parse validate response: %w", err)
-	}
-	if resp.Result == "ERROR" {
-		return nil, apiError(resp.Code, resp.Description)
-	}
-	return &resp, nil
-}

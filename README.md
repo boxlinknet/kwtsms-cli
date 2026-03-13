@@ -1,6 +1,6 @@
 # kwtsms-cli
 
-A command-line interface for the [kwtSMS](https://www.kwtsms.com) SMS gateway. Send SMS messages, check your account balance, validate phone numbers, and manage sender IDs, all from your terminal or as part of an automated workflow.
+A command-line interface for the [kwtSMS](https://www.kwtsms.com) SMS gateway. Send SMS messages, check your account balance, and manage sender IDs, all from your terminal or as part of an automated workflow.
 
 Designed for developers, DevOps engineers, and AI agents that need to integrate SMS delivery into scripts, pipelines, and automation without writing custom code.
 
@@ -19,7 +19,6 @@ Designed for developers, DevOps engineers, and AI agents that need to integrate 
 - **AI agent integration:** Provide AI agents and LLM-powered tools with the ability to send SMS messages as a tool call.
 - **CI/CD pipelines:** Trigger SMS alerts on deployment, test failure, or system events.
 - **OTP delivery:** Send one-time passwords from any script or backend service.
-- **Bulk validation:** Validate large lists of phone numbers before running a campaign.
 - **Balance monitoring:** Check remaining credits as part of a scheduled health check.
 
 ## Installation
@@ -159,31 +158,6 @@ MsgID:      f4c841adee210f31307633ceaebff2ec
 | `-s, --sender` | No | Sender ID (overrides config default) |
 | `--test` | No | Queue without delivery, no credits used |
 
-### `kwtsms-cli validate`
-
-Check whether phone numbers are valid and routable before sending. Useful for cleaning contact lists before a bulk campaign.
-
-```bash
-# Space-separated
-kwtsms-cli validate 96598765432 96512345678
-
-# Comma-separated
-kwtsms-cli validate 96598765432,96512345678
-
-# From a file (one number per line)
-cat numbers.txt | xargs kwtsms-cli validate
-```
-
-```
-Valid:    96598765432
-Invalid:  123
-NoRoute:  none
-```
-
-- **Valid:** accepted and routable
-- **Invalid:** format error (will be auto-corrected on send)
-- **NoRoute:** number format is valid but the country is not activated on your account
-
 ## Global Flags
 
 These flags work on every command.
@@ -262,11 +236,6 @@ available=$(kwtsms-cli balance --json | jq '.available')
 if [ "$available" -lt 100 ]; then
   echo "Low balance: $available credits remaining"
 fi
-```
-
-**Validate a list before a campaign:**
-```bash
-kwtsms-cli validate $(cat numbers.txt | tr '\n' ',') --json
 ```
 
 **Use in a Makefile, cron job, or GitHub Actions workflow:**
