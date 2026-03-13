@@ -3,8 +3,18 @@
 // Related files: cmd/root.go
 package main
 
-import "github.com/boxlinknet/kwtsms-cli/cmd"
+import (
+	"fmt"
+	"os"
+
+	"github.com/boxlinknet/kwtsms-cli/cmd"
+	"github.com/boxlinknet/kwtsms-cli/internal/update"
+)
 
 func main() {
+	notice := update.CheckAsync(cmd.Version())
 	cmd.Execute()
+	if msg := <-notice; msg != "" {
+		fmt.Fprintln(os.Stderr, msg)
+	}
 }
