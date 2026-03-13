@@ -6,7 +6,7 @@ Designed for developers, DevOps engineers, and AI agents that need to integrate 
 
 ## About kwtSMS
 
-[kwtSMS](https://www.kwtsms.com) is a Kuwait-based SMS gateway providing reliable local and international SMS delivery. It supports Arabic messaging, transactional and promotional sender IDs, and a simple REST API. Used by businesses across Kuwait and the GCC region for OTP delivery, customer notifications, and bulk campaigns.
+[kwtSMS](https://www.kwtsms.com) is a Kuwait-based SMS gateway trusted by businesses to deliver messages across Kuwait (Zain, Ooredoo, STC, Virgin) and internationally. It offers private Sender IDs, free API testing, non-expiring credits, and competitive flat-rate pricing. Open a free account in under one minute at [kwtsms.com/signup](https://www.kwtsms.com/signup/), no paperwork or payment required.
 
 - Website: [www.kwtsms.com](https://www.kwtsms.com)
 - Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
