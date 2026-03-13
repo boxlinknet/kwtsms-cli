@@ -21,14 +21,21 @@ var releaseURL = "https://api.github.com/repos/boxlinknet/kwtsms-cli/releases/la
 
 const downloadBase = "https://github.com/boxlinknet/kwtsms-cli/releases/latest/download/"
 
-// CheckNow fetches the latest GitHub release synchronously and returns a
-// human-readable notice if a newer version is available, or an empty string.
-func CheckNow(current string) string {
+// Result holds the outcome of a version check.
+type Result struct {
+	Current     string `json:"current"`
+	Latest      string `json:"latest"`
+	UpToDate    bool   `json:"up_to_date"`
+	DownloadURL string `json:"download_url"`
+}
+
+// CheckNow fetches the latest GitHub release and returns a Result.
+// On any error the returned Result has Latest empty and UpToDate false.
+func CheckNow(current string) (*Result, error) {
 	return check(current)
 }
 
 // platformBinary returns the binary filename for the current OS and architecture.
-// Returns an empty string for unsupported platforms.
 func platformBinary() string {
 	switch runtime.GOOS {
 	case "linux":
@@ -55,57 +62,55 @@ func platformBinary() string {
 	return ""
 }
 
-func check(current string) string {
-	if current == "dev" || current == "" {
-		return ""
-	}
-	if !semverRE.MatchString(current) {
-		return ""
+func check(current string) (*Result, error) {
+	if current == "dev" || current == "" || !semverRE.MatchString(current) {
+		return &Result{Current: current}, fmt.Errorf("version-check not available for this build")
 	}
 
 	client := &http.Client{Timeout: 3 * time.Second}
 	resp, err := client.Get(releaseURL)
 	if err != nil {
-		return ""
+		return nil, fmt.Errorf("cannot reach GitHub: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return ""
+		return nil, fmt.Errorf("unexpected response from GitHub: HTTP %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 4096))
 	if err != nil {
-		return ""
+		return nil, fmt.Errorf("failed to read response: %w", err)
 	}
 
 	var release struct {
 		TagName string `json:"tag_name"`
 	}
 	if err := json.Unmarshal(body, &release); err != nil {
-		return ""
+		return nil, fmt.Errorf("failed to parse response: %w", err)
 	}
 
 	if !semverRE.MatchString(release.TagName) {
-		return ""
+		return nil, fmt.Errorf("unexpected tag format from GitHub: %q", release.TagName)
 	}
 
 	latest := strings.TrimPrefix(release.TagName, "v")
 	cur := strings.TrimPrefix(current, "v")
-	if latest == cur {
-		return ""
+	upToDate := latest == cur
+
+	downloadURL := ""
+	if !upToDate {
+		if binary := platformBinary(); binary != "" {
+			downloadURL = downloadBase + binary
+		} else {
+			downloadURL = "https://github.com/boxlinknet/kwtsms-cli/releases/latest"
+		}
 	}
 
-	binary := platformBinary()
-	if binary == "" {
-		return fmt.Sprintf("A new version is available: %s\nDownload: %s",
-			release.TagName,
-			"https://github.com/boxlinknet/kwtsms-cli/releases/latest",
-		)
-	}
-	return fmt.Sprintf("A new version is available: %s\nDownload: %s%s",
-		release.TagName,
-		downloadBase,
-		binary,
-	)
+	return &Result{
+		Current:     current,
+		Latest:      release.TagName,
+		UpToDate:    upToDate,
+		DownloadURL: downloadURL,
+	}, nil
 }

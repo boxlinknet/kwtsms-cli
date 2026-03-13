@@ -9,6 +9,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/boxlinknet/kwtsms-cli/internal/output"
 	"github.com/boxlinknet/kwtsms-cli/internal/update"
 )
 
@@ -19,11 +20,17 @@ var updateCmd = &cobra.Command{
 	// Override PersistentPreRunE — no credentials needed for this command.
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error { return nil },
 	RunE: func(cmd *cobra.Command, args []string) error {
-		msg := update.CheckNow(version)
-		if msg == "" {
-			fmt.Printf("kwtsms-cli %s is up to date.\n", version)
+		result, err := update.CheckNow(version)
+		if err != nil {
+			return err
+		}
+		if jsonFlag {
+			return output.PrintJSON(result)
+		}
+		if result.UpToDate {
+			fmt.Printf("kwtsms-cli %s is up to date.\n", result.Current)
 		} else {
-			fmt.Println(msg)
+			fmt.Printf("A new version is available: %s\nDownload: %s\n", result.Latest, result.DownloadURL)
 		}
 		return nil
 	},
