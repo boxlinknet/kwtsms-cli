@@ -19,15 +19,15 @@ import (
 
 // Credentials resolved by PersistentPreRunE and used by all subcommands.
 var (
-	Username   string
-	Password   string
+	Username      string
+	Password      string
 	DefaultSender string
 )
 
 // Global flag values
 var (
-	jsonFlag   bool
-	configFlag string
+	jsonFlag     bool
+	configFlag   string
 	usernameFlag string
 	passwordFlag string
 )

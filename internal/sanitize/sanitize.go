@@ -20,9 +20,9 @@ var arabicToLatin = strings.NewReplacer(
 )
 
 var (
-	reNonDigit    = regexp.MustCompile(`\D`)
-	reHTMLTag     = regexp.MustCompile(`<[^>]*>`)
-	reHexEntity   = regexp.MustCompile(`&#x[0-9a-fA-F]+;|&#[0-9]+;|%[0-9a-fA-F]{2}`)
+	reNonDigit   = regexp.MustCompile(`\D`)
+	reHTMLTag    = regexp.MustCompile(`<[^>]*>`)
+	reHexEntity  = regexp.MustCompile(`&#x[0-9a-fA-F]+;|&#[0-9]+;|%[0-9a-fA-F]{2}`)
 	reSQLMeta    = regexp.MustCompile("['`\";]|--|/\\*|\\*/")
 	reSenderIDOK = regexp.MustCompile(`^[A-Za-z0-9\-\. ]+$`)
 )
