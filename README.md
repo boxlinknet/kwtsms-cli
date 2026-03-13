@@ -125,7 +125,7 @@ kwtsms-cli coverage --json
 
 ### `kwtsms-cli send`
 
-Send an SMS to one or more recipients.
+Send an SMS to one or more recipients. Accepts any number of recipients: batches larger than 200 are split automatically and sent with a short delay between batches.
 
 ```bash
 # Single recipient
@@ -133,6 +133,9 @@ kwtsms-cli send --to 96598765432 --message "Your verification code is 4821"
 
 # Multiple recipients (comma-separated)
 kwtsms-cli send --to 96598765432,96512345678 --message "System maintenance tonight at 10pm"
+
+# Bulk send: more than 200 numbers are batched automatically
+kwtsms-cli send --to 96550000001,96550000002,...,96550000250 --message "Announcement"
 
 # Specify a sender ID
 kwtsms-cli send --to 96598765432 --message "Your order is ready" --sender MY-BRAND
@@ -149,11 +152,13 @@ Balance:    1,234
 MsgID:      f4c841adee210f31307633ceaebff2ec
 ```
 
+For bulk sends spanning multiple batches, a MsgID is shown for each batch.
+
 **Flags:**
 
 | Flag | Required | Description |
 |---|---|---|
-| `-t, --to` | Yes | Recipient number(s), comma-separated |
+| `-t, --to` | Yes | Recipient number(s), comma-separated. Duplicates removed automatically. |
 | `-m, --message` | Yes | Message text |
 | `-s, --sender` | No | Sender ID (overrides config default) |
 | `--test` | No | Queue without delivery, no credits used |
@@ -168,6 +173,7 @@ These flags work on every command.
 | `--config PATH` | Use a different config file instead of the default |
 | `--username VALUE` | Override the API username for this call only |
 | `--password VALUE` | Override the API password for this call only |
+| `--version` | Print version and exit |
 
 ## Configuration
 
