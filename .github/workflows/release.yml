@@ -1,0 +1,71 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # CGO_ENABLED=0 ensures pure Go builds, allowing a single Linux runner
+    # to cross-compile for all 6 targets including macOS and Windows.
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            asset: kwtsms-cli-linux-x64
+          - goos: linux
+            goarch: arm64
+            asset: kwtsms-cli-linux-arm64
+          - goos: linux
+            goarch: arm
+            goarm: "7"
+            asset: kwtsms-cli-linux-armv7
+          - goos: darwin
+            goarch: amd64
+            asset: kwtsms-cli-macos-x64
+          - goos: darwin
+            goarch: arm64
+            asset: kwtsms-cli-macos-arm64
+          - goos: windows
+            goarch: amd64
+            asset: kwtsms-cli-windows-x64.exe
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+
+      - name: Build
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          GOARM: ${{ matrix.goarm }}
+          CGO_ENABLED: 0
+          ASSET_NAME: ${{ matrix.asset }}
+        run: go build -ldflags="-s -w" -o "$ASSET_NAME" .
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.asset }}
+          path: ${{ matrix.asset }}
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: "kwtsms-cli-*"
+          generate_release_notes: true
