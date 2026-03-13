@@ -19,8 +19,10 @@ import (
 	"time"
 )
 
+// baseURL is a var so tests can override it with an httptest.Server URL.
+var baseURL = "https://www.kwtsms.com/API/"
+
 const (
-	baseURL        = "https://www.kwtsms.com/API/"
 	requestTimeout = 30 * time.Second
 	dialTimeout    = 10 * time.Second
 	tlsTimeout     = 10 * time.Second
