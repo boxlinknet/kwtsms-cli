@@ -314,6 +314,13 @@ fi
     KWTSMS_SENDER: ${{ secrets.KWTSMS_SENDER }}
 ```
 
+## Planned
+
+- **Homebrew formula:** `brew install kwtsms-cli` support for macOS.
+- **File input for bulk send:** `--file numbers.txt` to load recipients from a file.
+- **`validate` command:** Check phone numbers against the API before sending.
+- **`status` command:** Look up a sent message by its ID.
+
 ## Support
 
 - Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
