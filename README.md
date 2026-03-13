@@ -54,7 +54,7 @@ sudo mv kwtsms-cli /usr/local/bin/
 
 ### Compile from source
 
-If you prefer to build from source, you only need [Go](https://go.dev/dl/) installed. No other tools or system libraries are required.
+Requires only [Go](https://go.dev/dl/) installed. No other tools or system libraries needed.
 
 ```bash
 git clone https://github.com/boxlinknet/kwtsms-cli
@@ -62,12 +62,12 @@ cd kwtsms-cli
 go build -o kwtsms-cli .
 ```
 
-This works on any platform that Go supports, including Linux, macOS, Windows, and Raspberry Pi.
+Works on any platform Go supports: Linux, macOS, Windows, and Raspberry Pi.
 
 ## Quick Start
 
 ```bash
-# Step 1: configure your API credentials
+# Step 1: configure your credentials
 kwtsms-cli setup
 
 # Step 2: send your first message
@@ -77,19 +77,34 @@ kwtsms-cli send --to 96598765432 --message "Hello from kwtsms-cli"
 kwtsms-cli balance
 ```
 
-Your API credentials are stored in `~/.config/kwtsms-cli/kwtsms-cli.toml` with restricted permissions. You can get your API credentials from your [kwtSMS account](https://www.kwtsms.com/account/api/).
-
 ## Commands
 
 ### `kwtsms-cli setup`
 
-Interactive setup wizard. Prompts for your API username and password, verifies them against the API, lets you choose a default sender ID, and configures a log file. Writes the config file to the correct location for your operating system.
+Interactive wizard. Run once before using any other command.
 
-```bash
-kwtsms-cli setup
+Prompts for API username, password, default sender ID, and log file. Verifies credentials against the API before saving anything. Writes the config file to the platform-appropriate location.
+
 ```
+kwtSMS CLI Setup
+----------------
+API Username: myapiuser
+API Password: ••••••••••••••
 
-Run this once before using any other command.
+Verifying credentials...
+
+Available sender IDs:
+  [1] KWT-SMS
+  [2] MY-BRAND
+
+Select default sender ID [1]: 2
+
+Log file [kwtsms-cli.log]
+(Enter for default, type path to change, "none" to disable):
+
+Config saved to: /home/user/.config/kwtsms-cli/kwtsms-cli.toml
+Log file:        kwtsms-cli.log
+```
 
 ### `kwtsms-cli balance`
 
@@ -125,21 +140,17 @@ kwtsms-cli coverage --json
 
 ### `kwtsms-cli send`
 
-Send an SMS to one or more recipients. Accepts any number of recipients: batches larger than 200 are split automatically and sent with a short delay between batches.
+Send an SMS to one or more recipients.
 
 ```bash
 # Single recipient
 kwtsms-cli send --to 96598765432 --message "Your verification code is 4821"
 
-# Multi-line message (use $'...' in bash for \n to be interpreted as a newline)
-kwtsms-cli send --to 96598765432 --message $'Order confirmed\nTracking: TRK-12345\nExpected: Tomorrow'
-
 # Multiple recipients (comma-separated)
 kwtsms-cli send --to 96598765432,96512345678 --message "System maintenance tonight at 10pm"
 
-# Bulk send: more than 200 numbers are batched automatically (200 per API call, 500ms between batches)
-# Practical limits per OS: Linux/macOS ~150,000 numbers, Windows ~2,500 numbers
-kwtsms-cli send --to 96550000001,96550000002,...,96550000250 --message "Announcement"
+# Multi-line message — use $'...' in bash so \n becomes a real newline
+kwtsms-cli send --to 96598765432 --message $'Order confirmed\nTracking: TRK-12345\nExpected: Tomorrow'
 
 # Specify a sender ID
 kwtsms-cli send --to 96598765432 --message "Your order is ready" --sender MY-BRAND
@@ -156,29 +167,36 @@ Balance:    1,234
 MsgID:      f4c841adee210f31307633ceaebff2ec
 ```
 
-For bulk sends spanning multiple batches, Numbers and Charged are aggregated and a MsgID is shown for each batch.
+**Bulk sending:** any number of recipients is accepted. Batches larger than 200 are split automatically into groups of 200 with a 500ms delay between batches. Numbers and Charged are aggregated in the output, with one MsgID per batch.
 
-**Bulk recipient limits (command-line argument size):**
+```
+Sent
+Numbers:    250
+Charged:    250
+Balance:    1,734
+MsgID:      bb6ceabbf187d0479a24eb0ea79edace
+            7793a77bc56ed1ff1bc0979c332cb98d
+```
 
-| Platform | Estimated max recipients |
+Estimated maximum recipients per platform (command-line argument size limit):
+
+| Platform | Estimated max |
 |---|---|
 | Linux / macOS | ~150,000 |
 | Windows | ~2,500 |
-
-For lists larger than these limits, use a script to split input and call `kwtsms-cli send` in chunks.
 
 **Flags:**
 
 | Flag | Required | Description |
 |---|---|---|
-| `-t, --to` | Yes | Recipient number(s), comma-separated. Duplicates removed automatically. |
+| `-t, --to` | Yes | Recipient phone number(s), comma-separated. Duplicates removed automatically. |
 | `-m, --message` | Yes | Message text |
 | `-s, --sender` | No | Sender ID (overrides config default) |
 | `--test` | No | Queue without delivery, no credits used |
 
 ## Global Flags
 
-These flags work on every command.
+Available on every command.
 
 | Flag | Description |
 |---|---|
@@ -202,20 +220,18 @@ These flags work on every command.
 ```toml
 username = "myapiuser"
 password = "myapipass"
-sender   = "MY-SENDER"
+sender   = "MY-BRAND"
 log_file = "kwtsms-cli.log"
 ```
 
-The `log_file` value is a filename relative to the directory where you run the binary. Omit it or leave it empty to disable logging.
-
 ### Environment variables
 
-Useful for CI/CD pipelines and containerised environments where you want to inject credentials at runtime rather than storing them in a file.
+Useful for CI/CD pipelines and containerised environments.
 
 ```bash
 export KWTSMS_USERNAME=myapiuser
 export KWTSMS_PASSWORD=myapipass
-export KWTSMS_SENDER=MY-SENDER
+export KWTSMS_SENDER=MY-BRAND
 ```
 
 ### Credential priority
@@ -241,6 +257,17 @@ All of the following formats are accepted. Numbers are automatically normalised 
 ```
 
 Arabic-Indic digits (`٩٦٥...`) are also accepted and converted automatically.
+
+## Logging
+
+When a log file is configured, every `send` call appends one JSON line to the file. The log records the timestamp, number of recipients, credits charged, balance after, and all message IDs. Credentials, phone numbers, and message text are never written to the log.
+
+```json
+{"time":"2026-03-13T09:45:00Z","numbers":250,"charged":250,"balance":1,734,"msg_ids":["bb6ceabb...","7793a77b..."]}
+{"time":"2026-03-13T09:50:00Z","error":"[ERR011] Insufficient balance."}
+```
+
+The `log_file` value in the config is a filename relative to the directory where you run the binary. To disable logging, remove the `log_file` line from the config or set it to an empty string. You can also reconfigure it at any time by running `kwtsms-cli setup` again.
 
 ## AI Agent and Automation Usage
 
