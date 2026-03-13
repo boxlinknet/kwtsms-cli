@@ -7,10 +7,12 @@ package api
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -20,12 +22,25 @@ import (
 const (
 	baseURL        = "https://www.kwtsms.com/API/"
 	requestTimeout = 30 * time.Second
+	dialTimeout    = 10 * time.Second
+	tlsTimeout     = 10 * time.Second
 )
 
-// httpClient is the package-level HTTP client with a 30-second timeout.
+// UserAgent is set at build time via ldflags: -X github.com/boxlinknet/kwtsms-cli/internal/api.UserAgent=...
+// Defaults to "kwtsms-cli/dev" if not set.
+var UserAgent = "kwtsms-cli/dev"
+
+// httpClient is the package-level HTTP client with explicit dial and TLS timeouts.
 // TLS certificate validation is always enabled (no InsecureSkipVerify).
 var httpClient = &http.Client{
 	Timeout: requestTimeout,
+	Transport: &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout:   dialTimeout,
+			KeepAlive: 30 * time.Second,
+		}).DialContext,
+		TLSHandshakeTimeout: tlsTimeout,
+	},
 }
 
 // APIError holds the error fields returned by the kwtSMS API when result == "ERROR".
@@ -108,12 +123,16 @@ func post(endpoint string, body interface{}) ([]byte, error) {
 		return nil, fmt.Errorf("failed to encode request: %w", err)
 	}
 
-	req, err := http.NewRequest(http.MethodPost, baseURL+endpoint, bytes.NewReader(payload))
+	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, baseURL+endpoint, bytes.NewReader(payload))
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("User-Agent", UserAgent)
 
 	resp, err := httpClient.Do(req)
 	if err != nil {

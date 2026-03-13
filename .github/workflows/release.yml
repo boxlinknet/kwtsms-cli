@@ -34,9 +34,9 @@ jobs:
             asset: kwtsms-cli-windows-x64.exe
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions/setup-go@v6
+      - uses: actions/setup-go@4b73464bb391d4059bd26b0524d20df3927bd417 # v6.3.0
         with:
           go-version: stable
 
@@ -47,10 +47,10 @@ jobs:
           GOARM: ${{ matrix.goarm }}
           CGO_ENABLED: 0
           ASSET_NAME: ${{ matrix.asset }}
-        run: go build -ldflags="-s -w" -o "$ASSET_NAME" .
+        run: go build -ldflags="-s -w -X github.com/boxlinknet/kwtsms-cli/cmd.version=${GITHUB_REF_NAME}" -o "$ASSET_NAME" .
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:
           name: ${{ matrix.asset }}
           path: ${{ matrix.asset }}
@@ -61,11 +61,11 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           merge-multiple: true
 
-      - uses: softprops/action-gh-release@v2
+      - uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b # v2.5.0
         with:
           files: "kwtsms-cli-*"
           generate_release_notes: true

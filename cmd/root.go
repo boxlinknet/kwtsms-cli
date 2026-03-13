@@ -12,6 +12,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
+	"github.com/boxlinknet/kwtsms-cli/internal/api"
 	"github.com/boxlinknet/kwtsms-cli/internal/config"
 	"github.com/boxlinknet/kwtsms-cli/internal/output"
 	"github.com/boxlinknet/kwtsms-cli/internal/sanitize"
@@ -33,11 +34,14 @@ var (
 	passwordFlag string
 )
 
+// version is set at build time via ldflags:
+// -X github.com/boxlinknet/kwtsms-cli/cmd.version=v1.0.0
+var version = "dev"
+
 var rootCmd = &cobra.Command{
 	Use:           "kwtsms-cli",
 	Short:         "kwtSMS command-line interface",
 	Long:          "Send SMS, check balance, and manage your kwtSMS account from the terminal.",
-	Version:       "1.0.0",
 	SilenceUsage:  true, // don't print usage on API or runtime errors
 	SilenceErrors: true, // let Execute() handle error printing once
 	// PersistentPreRunE runs before every subcommand except setup (which overrides it).
@@ -115,6 +119,9 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.Version = version
+	api.UserAgent = "kwtsms-cli/" + version
+
 	// Persistent flags available to all subcommands
 	rootCmd.PersistentFlags().BoolVar(&jsonFlag, "json", false, "output as JSON")
 	rootCmd.PersistentFlags().StringVar(&configFlag, "config", "", "override config file path")

@@ -8,6 +8,7 @@ package logger
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 	"time"
 
@@ -56,12 +57,16 @@ func LogError(path string, err error) {
 func appendEntry(path string, e entry) {
 	data, err := json.Marshal(e)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "warning: failed to encode log entry: %v\n", err)
 		return
 	}
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0600)
 	if err != nil {
+		fmt.Fprintf(os.Stderr, "warning: failed to open log file %s: %v\n", path, err)
 		return
 	}
 	defer f.Close()
-	_, _ = f.Write(append(data, '\n'))
+	if _, err := f.Write(append(data, '\n')); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: failed to write log entry: %v\n", err)
+	}
 }
