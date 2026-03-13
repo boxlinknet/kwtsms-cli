@@ -18,6 +18,8 @@ func TestSanitizePhone(t *testing.T) {
 		{"٩٦٥٩٨٧٦٥٤٣٢", "96598765432", false},
 		{"۹۶۵۹۸۷۶۵۴۳۲", "96598765432", false},
 		{"96598765432", "96598765432", false},
+		// local trunk prefix stripped: +966 055-XXX-XXXX → 96655XXXXXXX
+		{"+966 055 123 4567", "966551234567", false},
 		{"abc", "", true},
 		{"", "", true},
 		{"   ", "", true},

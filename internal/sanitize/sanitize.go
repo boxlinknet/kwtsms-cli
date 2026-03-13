@@ -252,6 +252,24 @@ func SanitizePhone(input string) (string, error) {
 	if s == "" {
 		return "", fmt.Errorf("invalid phone number: %q contains no valid digits", input)
 	}
+
+	// Strip local trunk prefix (leading 0 after country code).
+	// e.g. +966 055-XXX-XXXX → 9660559... → strip the 0 → 966559...
+	// This happens when users include the local dialing prefix in international format.
+	if cc := findCountryCode(s); cc != "" {
+		local := s[len(cc):]
+		if len(local) > 0 && local[0] == '0' {
+			rule := phoneRules[cc]
+			stripped := local[1:]
+			for _, l := range rule.localLengths {
+				if len(stripped) == l {
+					s = cc + stripped
+					break
+				}
+			}
+		}
+	}
+
 	if len(s) < 7 {
 		return "", fmt.Errorf("invalid phone number: %q is too short (minimum 7 digits)", input)
 	}
