@@ -131,6 +131,9 @@ Send an SMS to one or more recipients. Accepts any number of recipients: batches
 # Single recipient
 kwtsms-cli send --to 96598765432 --message "Your verification code is 4821"
 
+# Multi-line message (use $'...' in bash for \n to be interpreted as a newline)
+kwtsms-cli send --to 96598765432 --message $'Order confirmed\nTracking: TRK-12345\nExpected: Tomorrow'
+
 # Multiple recipients (comma-separated)
 kwtsms-cli send --to 96598765432,96512345678 --message "System maintenance tonight at 10pm"
 
