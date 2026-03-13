@@ -1,0 +1,28 @@
+# Build output
+dist/
+kwtsms-cli
+kwtsms-cli.exe
+
+# Go
+*.test
+*.out
+vendor/
+
+# Environment
+.env
+.env.*
+
+# Secrets and logs
+*.log
+*.zip
+
+# IDE
+.idea/
+.vscode/
+
+# Project-specific
+.claude/
+CLAUDE.md
+docs/
+.worktrees/
+docker/
