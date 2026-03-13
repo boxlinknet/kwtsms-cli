@@ -9,6 +9,7 @@ Designed for developers, DevOps engineers, and AI agents that need to integrate 
 [kwtSMS](https://www.kwtsms.com) is a Kuwait-based SMS gateway providing reliable local and international SMS delivery. It supports Arabic messaging, transactional and promotional sender IDs, and a simple REST API. Used by businesses across Kuwait and the GCC region for OTP delivery, customer notifications, and bulk campaigns.
 
 - Website: [www.kwtsms.com](https://www.kwtsms.com)
+- Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
 - Support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 - API documentation: [www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf](https://www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf)
 - FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
@@ -250,11 +251,12 @@ fi
 
 ## Support
 
+- Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
 - General support and account questions: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 - FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
 - Sender ID help: [www.kwtsms.com/sender-id-help.html](https://www.kwtsms.com/sender-id-help.html)
 - API documentation: [www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf](https://www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf)
-- WhatsApp support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
+- Support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 
 For security vulnerability reports, see [SECURITY.md](SECURITY.md).
 
