@@ -254,7 +254,7 @@ fi
 - FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
 - Sender ID help: [www.kwtsms.com/sender-id-help.html](https://www.kwtsms.com/sender-id-help.html)
 - API documentation: [www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf](https://www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf)
-- WhatsApp support: [+965 9922 0322](https://wa.me/96599220322)
+- WhatsApp support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 
 For security vulnerability reports, see [SECURITY.md](SECURITY.md).
 

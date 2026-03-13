@@ -10,7 +10,6 @@
 
 To report a security vulnerability in kwtsms-cli, please contact the kwtSMS security team directly. Do not open a public GitHub issue for security vulnerabilities.
 
-**Email:** support@kwtsms.com
 **Website:** [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 
 Please include in your report:
