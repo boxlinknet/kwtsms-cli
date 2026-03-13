@@ -17,7 +17,6 @@ var senderidCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		resp, err := api.GetSenderID(Username, Password)
 		if err != nil {
-			output.PrintError(err)
 			return err
 		}
 		if jsonFlag {

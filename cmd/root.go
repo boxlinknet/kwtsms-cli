@@ -33,9 +33,11 @@ var (
 )
 
 var rootCmd = &cobra.Command{
-	Use:   "kwtsms-cli",
-	Short: "kwtSMS command-line interface",
-	Long:  "Send SMS, check balance, and manage your kwtSMS account from the terminal.",
+	Use:          "kwtsms-cli",
+	Short:        "kwtSMS command-line interface",
+	Long:         "Send SMS, check balance, and manage your kwtSMS account from the terminal.",
+	SilenceUsage: true,  // don't print usage on API or runtime errors
+	SilenceErrors: true, // let Execute() handle error printing once
 	// PersistentPreRunE runs before every subcommand except setup (which overrides it).
 	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		return loadCredentials()

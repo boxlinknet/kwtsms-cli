@@ -44,18 +44,19 @@ func SanitizePhone(input string) (string, error) {
 	return s, nil
 }
 
-// SanitizePhones splits a raw input on commas, spaces, and newlines,
-// applies SanitizePhone to each token, and returns the cleaned list.
-// Tokens that produce empty strings after cleaning are skipped.
+// SanitizePhones splits a raw input on commas and newlines,
+// applies SanitizePhone to each token, deduplicates, and returns the cleaned list.
+// Spaces within a token are treated as part of the number and stripped by SanitizePhone.
 // Returns an error if any token is invalid or the resulting list is empty.
 func SanitizePhones(input string) ([]string, error) {
-	// Split on commas, spaces, newlines, and tabs
+	// Split on commas and newlines only; spaces are stripped per-number by SanitizePhone
 	tokens := strings.FieldsFunc(input, func(r rune) bool {
-		return r == ',' || r == ' ' || r == '\n' || r == '\t' || r == '\r'
+		return r == ',' || r == '\n' || r == '\t' || r == '\r'
 	})
 	if len(tokens) == 0 {
 		return nil, fmt.Errorf("no phone numbers provided")
 	}
+	seen := make(map[string]bool)
 	var results []string
 	for _, token := range tokens {
 		token = strings.TrimSpace(token)
@@ -66,7 +67,10 @@ func SanitizePhones(input string) ([]string, error) {
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, cleaned)
+		if !seen[cleaned] {
+			seen[cleaned] = true
+			results = append(results, cleaned)
+		}
 	}
 	if len(results) == 0 {
 		return nil, fmt.Errorf("no valid phone numbers after cleaning")

@@ -41,10 +41,13 @@ func TestSanitizePhones(t *testing.T) {
 		wantErr bool
 	}{
 		{"9651234,9659876", []string{"9651234", "9659876"}, false},
-		{"9651234 9659876", []string{"9651234", "9659876"}, false},
+		// spaces within a token are stripped per-number, not treated as delimiters
+		{"965 9876 5432", []string{"96598765432"}, false},
 		{"+9651234,+9659876", []string{"9651234", "9659876"}, false},
 		{"9651234\n9659876", []string{"9651234", "9659876"}, false},
 		{"9651234, 9659876", []string{"9651234", "9659876"}, false},
+		// deduplication
+		{"9651234,9651234,9659876", []string{"9651234", "9659876"}, false},
 		{"", nil, true},
 		{"abc", nil, true},
 	}

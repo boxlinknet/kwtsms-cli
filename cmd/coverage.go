@@ -17,7 +17,6 @@ var coverageCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		raw, err := api.GetCoverage(Username, Password)
 		if err != nil {
-			output.PrintError(err)
 			return err
 		}
 		if jsonFlag {

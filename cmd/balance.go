@@ -17,7 +17,6 @@ var balanceCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		resp, err := api.GetBalance(Username, Password)
 		if err != nil {
-			output.PrintError(err)
 			return err
 		}
 		if jsonFlag {

@@ -71,7 +71,6 @@ func runSend() error {
 	numbers := strings.Join(phones, ",")
 	resp, err := api.SendSMS(Username, Password, sender, numbers, message, sendTest)
 	if err != nil {
-		output.PrintError(err)
 		return err
 	}
 	if jsonFlag {
