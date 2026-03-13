@@ -11,7 +11,6 @@ Designed for developers, DevOps engineers, and AI agents that need to integrate 
 - Website: [www.kwtsms.com](https://www.kwtsms.com)
 - Dashboard: [www.kwtsms.com/login](https://www.kwtsms.com/login)
 - Support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
-- API documentation: [www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf](https://www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf)
 - FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
 
 ## Use Cases
@@ -255,8 +254,6 @@ fi
 - General support and account questions: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 - FAQ: [www.kwtsms.com/faq/](https://www.kwtsms.com/faq/)
 - Sender ID help: [www.kwtsms.com/sender-id-help.html](https://www.kwtsms.com/sender-id-help.html)
-- API documentation: [www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf](https://www.kwtsms.com/doc/KwtSMS.com_API_Documentation_v41.pdf)
-- Support: [www.kwtsms.com/support.html](https://www.kwtsms.com/support.html)
 
 For security vulnerability reports, see [SECURITY.md](SECURITY.md).
 
