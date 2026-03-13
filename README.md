@@ -1,5 +1,12 @@
 # kwtsms-cli
 
+[![Release](https://img.shields.io/github/v/release/boxlinknet/kwtsms-cli)](https://github.com/boxlinknet/kwtsms-cli/releases/latest)
+[![Build](https://img.shields.io/github/actions/workflow/status/boxlinknet/kwtsms-cli/release.yml?label=build)](https://github.com/boxlinknet/kwtsms-cli/actions)
+[![Downloads](https://img.shields.io/github/downloads/boxlinknet/kwtsms-cli/total)](https://github.com/boxlinknet/kwtsms-cli/releases)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/boxlinknet/kwtsms-cli)](https://go.dev)
+[![License](https://img.shields.io/github/license/boxlinknet/kwtsms-cli)](https://github.com/boxlinknet/kwtsms-cli/blob/main/LICENSE)
+[![Platform](https://img.shields.io/badge/platform-linux%20%7C%20macos%20%7C%20windows-blue)](https://github.com/boxlinknet/kwtsms-cli/releases/latest)
+
 A command-line interface for the [kwtSMS](https://www.kwtsms.com) SMS gateway. Send SMS messages, check your account balance, and manage sender IDs, all from your terminal or as part of an automated workflow.
 
 Designed for developers, DevOps engineers, and AI agents that need to integrate SMS delivery into scripts, pipelines, and automation without writing custom code.
