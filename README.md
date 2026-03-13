@@ -137,7 +137,8 @@ kwtsms-cli send --to 96598765432 --message $'Order confirmed\nTracking: TRK-1234
 # Multiple recipients (comma-separated)
 kwtsms-cli send --to 96598765432,96512345678 --message "System maintenance tonight at 10pm"
 
-# Bulk send: more than 200 numbers are batched automatically
+# Bulk send: more than 200 numbers are batched automatically (200 per API call, 500ms between batches)
+# Practical limits per OS: Linux/macOS ~150,000 numbers, Windows ~2,500 numbers
 kwtsms-cli send --to 96550000001,96550000002,...,96550000250 --message "Announcement"
 
 # Specify a sender ID
@@ -155,7 +156,16 @@ Balance:    1,234
 MsgID:      f4c841adee210f31307633ceaebff2ec
 ```
 
-For bulk sends spanning multiple batches, a MsgID is shown for each batch.
+For bulk sends spanning multiple batches, Numbers and Charged are aggregated and a MsgID is shown for each batch.
+
+**Bulk recipient limits (command-line argument size):**
+
+| Platform | Estimated max recipients |
+|---|---|
+| Linux / macOS | ~150,000 |
+| Windows | ~2,500 |
+
+For lists larger than these limits, use a script to split input and call `kwtsms-cli send` in chunks.
 
 **Flags:**
 
