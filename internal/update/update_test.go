@@ -91,15 +91,10 @@ func TestCheck_MalformedCurrentVersion(t *testing.T) {
 	}
 }
 
-func TestCheckAsync_ReturnsChannel(t *testing.T) {
+func TestCheckNow_NewerAvailable(t *testing.T) {
 	srv := serve(t, "v9.9.9")
-	orig := releaseURL
-	releaseURL = srv.URL
-	t.Cleanup(func() { releaseURL = orig })
-
-	ch := CheckAsync("v1.0.0")
-	msg := <-ch
+	msg := checkWith(t, srv, "v1.0.0")
 	if msg == "" {
-		t.Error("expected notice from CheckAsync, got empty string")
+		t.Error("expected notice from CheckNow, got empty string")
 	}
 }

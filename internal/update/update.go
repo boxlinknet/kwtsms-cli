@@ -19,17 +19,10 @@ var semverRE = regexp.MustCompile(`^v?\d+\.\d+\.\d+$`)
 // releaseURL is a var so tests can override it with an httptest.Server URL.
 var releaseURL = "https://api.github.com/repos/boxlinknet/kwtsms-cli/releases/latest"
 
-// CheckAsync starts a background goroutine that fetches the latest GitHub
-// release and sends a human-readable notice to the returned channel.
-// The channel receives exactly one value: a non-empty notice string if a
-// newer version is available, or an empty string otherwise.
-// Call this before running the command; read the channel after.
-func CheckAsync(current string) <-chan string {
-	ch := make(chan string, 1)
-	go func() {
-		ch <- check(current)
-	}()
-	return ch
+// CheckNow fetches the latest GitHub release synchronously and returns a
+// human-readable notice if a newer version is available, or an empty string.
+func CheckNow(current string) string {
+	return check(current)
 }
 
 func check(current string) string {

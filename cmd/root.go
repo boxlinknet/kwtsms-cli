@@ -110,9 +110,6 @@ func loadCredentials() error {
 	return nil
 }
 
-// Version returns the current build version.
-func Version() string { return version }
-
 // Execute runs the root command. Called from main().
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
