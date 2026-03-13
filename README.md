@@ -317,6 +317,7 @@ fi
 ## Planned
 
 - **Homebrew formula:** `brew install kwtsms-cli` support for macOS.
+- **`go install` one-liner:** `go install github.com/boxlinknet/kwtsms-cli@latest` for Go developers.
 - **File input for bulk send:** `--file numbers.txt` to load recipients from a file.
 - **`validate` command:** Check phone numbers against the API before sending.
 - **`status` command:** Look up a sent message by its ID.
