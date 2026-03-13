@@ -1,5 +1,4 @@
 // Package update checks for a newer kwtsms-cli release on GitHub.
-// The check runs in a goroutine so it never blocks command execution.
 // All errors are silently discarded — a failed check is invisible to the user.
 package update
 
@@ -9,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 )
@@ -19,19 +19,46 @@ var semverRE = regexp.MustCompile(`^v?\d+\.\d+\.\d+$`)
 // releaseURL is a var so tests can override it with an httptest.Server URL.
 var releaseURL = "https://api.github.com/repos/boxlinknet/kwtsms-cli/releases/latest"
 
+const downloadBase = "https://github.com/boxlinknet/kwtsms-cli/releases/latest/download/"
+
 // CheckNow fetches the latest GitHub release synchronously and returns a
 // human-readable notice if a newer version is available, or an empty string.
 func CheckNow(current string) string {
 	return check(current)
 }
 
+// platformBinary returns the binary filename for the current OS and architecture.
+// Returns an empty string for unsupported platforms.
+func platformBinary() string {
+	switch runtime.GOOS {
+	case "linux":
+		switch runtime.GOARCH {
+		case "amd64":
+			return "kwtsms-cli-linux-x64"
+		case "arm64":
+			return "kwtsms-cli-linux-arm64"
+		case "arm":
+			return "kwtsms-cli-linux-armv7"
+		}
+	case "darwin":
+		switch runtime.GOARCH {
+		case "amd64":
+			return "kwtsms-cli-macos-x64"
+		case "arm64":
+			return "kwtsms-cli-macos-arm64"
+		}
+	case "windows":
+		if runtime.GOARCH == "amd64" {
+			return "kwtsms-cli-windows-x64.exe"
+		}
+	}
+	return ""
+}
+
 func check(current string) string {
-	// Skip update check for dev builds and unversioned binaries.
 	if current == "dev" || current == "" {
 		return ""
 	}
-
-	// Validate current version looks like semver before making any request.
 	if !semverRE.MatchString(current) {
 		return ""
 	}
@@ -47,7 +74,6 @@ func check(current string) string {
 		return ""
 	}
 
-	// Cap response body to 4KB — we only need the tag_name field.
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 4096))
 	if err != nil {
 		return ""
@@ -60,20 +86,26 @@ func check(current string) string {
 		return ""
 	}
 
-	// Validate the tag from the API is a proper semver string before using it.
 	if !semverRE.MatchString(release.TagName) {
 		return ""
 	}
 
 	latest := strings.TrimPrefix(release.TagName, "v")
 	cur := strings.TrimPrefix(current, "v")
-
 	if latest == cur {
 		return ""
 	}
 
-	return fmt.Sprintf("\nA new version is available: %s → %s",
+	binary := platformBinary()
+	if binary == "" {
+		return fmt.Sprintf("A new version is available: %s\nDownload: %s",
+			release.TagName,
+			"https://github.com/boxlinknet/kwtsms-cli/releases/latest",
+		)
+	}
+	return fmt.Sprintf("A new version is available: %s\nDownload: %s%s",
 		release.TagName,
-		"https://github.com/boxlinknet/kwtsms-cli/releases/latest",
+		downloadBase,
+		binary,
 	)
 }

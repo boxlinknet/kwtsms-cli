@@ -35,8 +35,11 @@ func TestCheck_NewerAvailable(t *testing.T) {
 	if !strings.Contains(msg, "v1.1.0") {
 		t.Errorf("notice missing new version: %q", msg)
 	}
+	if !strings.Contains(msg, "Download:") {
+		t.Errorf("notice missing download URL: %q", msg)
+	}
 	if !strings.Contains(msg, "github.com") {
-		t.Errorf("notice missing release URL: %q", msg)
+		t.Errorf("notice missing github.com: %q", msg)
 	}
 }
 
